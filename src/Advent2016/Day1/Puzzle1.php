@@ -86,5 +86,6 @@ class Puzzle1
     return abs($coordinatesNorth) + abs($coordinatesEast);
   // $final_array = array($coordinatesEast, $coordinatesNorth);
 //   return $final_array;
+//Testing
     }
 }
