@@ -11,7 +11,7 @@ class Puzzle1Test extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\\Advent2016\\Day1\\Puzzle1', new Puzzle1());
     }
 
-   /* public function testFirstPart()
+    public function testFirstPart()
     {
         $input = 'R2, L3';
 
@@ -38,7 +38,7 @@ class Puzzle1Test extends \PHPUnit_Framework_TestCase
         $puzzle->getBlocksAway($input);
         
         $this->assertSame(12, $puzzle->getBlocksAway($input));
-    }*/
+    }
     
     
 
