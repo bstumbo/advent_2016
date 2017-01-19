@@ -4,7 +4,7 @@ namespace Advent2016\Tests\Day2;
 
 use Advent2016\Day2\Puzzle2;
 
-class Puzzle12Test extends \PHPUnit_Framework_TestCase
+class Puzzle2Test extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreate()
     {
