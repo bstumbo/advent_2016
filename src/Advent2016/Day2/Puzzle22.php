@@ -7,7 +7,7 @@ class Puzzle22
 {
     /* Defines weird keypad and coordinates used in story problem */
     
-static $weirdkeypad = [
+public static $weirdkeypad = [
         1 => [2,2],
         2 => [1,1],
         3 => [2,1],
@@ -151,5 +151,6 @@ static $weirdkeypad = [
         $coordinate = $this->getLastKeypadCoordinate($history);
         return $this->getKeypadNumber($coordinate);
     }
+    
 
 }
