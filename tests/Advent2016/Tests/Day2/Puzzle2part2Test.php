@@ -32,9 +32,9 @@ class Day2part2Test extends \PHPUnit_Framework_TestCase
     
     foreach ($input as $i) {
         $final = $puzzle->getNumberBySequence($i, $origin);
-        $origin = $puzzle->getKeypadCoordinate($final);
+        $origin = $puzzle->getKeypadCoordinate($final); 
         print_r($final);
     }
-  }
+  } // Final answer is 9A7DC
   
 }
