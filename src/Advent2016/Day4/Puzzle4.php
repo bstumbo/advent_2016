@@ -28,25 +28,43 @@ class Puzzle4
         return $finalarray;
     }
     
+    /*
+     * Check to see if are listed in decending order
+     * If yes, return 2.  If no, return 3.  If equal, return 1
+     * Returns array indicating whether numbers are in order
+     * and whether any of them are equal
+     */
+    
     public function checkNum($merged) {
         $key_array = array_keys($merged); 
         $last_key = end($key_array);
+        $equal = [];
+        
         foreach ($merged as $key => $n){
-           if ($key == $last_key) {
-            break;
-            } else { 
-                $next_n = next($merged);
-                 if ($n > $next_n) {
+                 $next_n = next($merged);
+                 if ($next_n === NULL){
+                    break;
+                 } elseif ($n > $next_n) {
                        $truth = 2;
+                 }  elseif ($n == $next_n && $next_n !== NULL){
+                    $truth = 2;
+                    $next_key = key($merged);  //This is a problem. Causing alpha check problems later on
+                    current($merged);
+                    $equal[] = array($key, $next_key);
                  } else {
                    $truth = 3;
                    break;
               }
-            } 
         }
         
-        return $truth;
+        return array($truth, $equal);
     }
+    
+    /**
+     * If any numbers are equal, checkAlpha() checks to see
+     * if letters are in alpha order.
+     * Yes returns 2.  No return 3.
+     */
     
     public function checkAplha($keys){
         $check = [];
@@ -67,7 +85,7 @@ class Puzzle4
     
     public function checkSum($input) {
         $columns = $this->inputToArray($input);
-        $trueroom = 0;
+        $trueroom = [];
         
         foreach ($columns as $i) {
             $counted = [];
@@ -83,24 +101,26 @@ class Puzzle4
             $merged = array_combine($split, $counted);
             $keys = array_keys($merged);
             
-            foreach ($merged as $l => $n) {
-               $next_n = next($merged);
-               $next_l = next($keys);
-               $alpha = array($l, $next_n);
-               
-               if ($n > $next_n) {
-                    $truth = 2;
-               } elseif ($n = $next_n && sort($alpha) == $alpha) {
-                $truth = 2;
-               } else {
-                $truth = 3;
-                break;
-               }       
-            }
-         if ($truth == 2) {
-            $trueroom++;
-         } 
+            $numtest = $this->checkNum($merged);  
+            
+            if ($numtest[0] == 2 && $numtest[1] === array())  {
+                $trueroom[] = $id;
+            } elseif ($numtest[1] !== array()) {
+                foreach ($numtest[1] as $alpha){
+                    $alphatest = $this->checkAplha($alpha);
+                    if ($alphatest == 2){
+                        $keytest = 2;
+                    } else {
+                        $keytest = 3;
+                        break;
+                    }
+                }
+              if ($keytest == 2) {
+                $trueroom[] = $id ; // Add $id to $trueroom array to be added later
+              }
+            } 
         }
-        return $trueroom;   
+        $answer = array_sum($trueroom);
+        return $answer;   
     }
 }         
