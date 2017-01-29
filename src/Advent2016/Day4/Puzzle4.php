@@ -40,6 +40,10 @@ class Puzzle4
         $last_key = end($key_array);
         $equal = [];
         
+        if (reset($merged) == 0) {
+            $truth = 3;
+        } else {
+        
         foreach ($merged as $key => $n){
                  $next_n = next($merged);
                  if ($next_n === NULL){
@@ -55,6 +59,8 @@ class Puzzle4
                    $truth = 3;
                    break;
               }
+        }
+        
         }
         
         return array($truth, $equal);
@@ -94,13 +100,22 @@ class Puzzle4
             $checksum = substr($i[2], 1, -1); 
             $split = str_split($checksum);
             
+            $encryptarray = str_split($encrypt);
+            $encryptcount = array_count_values($encryptarray);
+            arsort($encryptcount);
+            ksort($encryptcount);
+            $encryptfinal = array_slice($encryptcount,0);
+             
             foreach ($split as $e) {
                 $counted[] = substr_count($encrypt, $e);
             }
             
+            
             $merged = array_combine($split, $counted);
             $keys = array_keys($merged);
             
+            if ($merged == $encryptfinal) {
+        
             $numtest = $this->checkNum($merged);  
             
             if ($numtest[0] == 2 && $numtest[1] === array())  {
@@ -118,6 +133,7 @@ class Puzzle4
               if ($keytest == 2) {
                 $trueroom[] = $id ; // Add $id to $trueroom array to be added later
               }
+            }
             } 
         }
         $answer = array_sum($trueroom);
