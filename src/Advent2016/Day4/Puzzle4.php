@@ -35,10 +35,11 @@ class Puzzle4
      * and whether any of them are equal
      */
     
-    public function checkNum($merged) {
+    public function checkNum($merged, $encryptfinal) {
         $key_array = array_keys($merged); 
         $last_key = end($key_array);
         $equal = [];
+        $fakemerged = $merged;
         
         if (reset($merged) == 0) {
             $truth = 3;
@@ -114,9 +115,9 @@ class Puzzle4
             $merged = array_combine($split, $counted);
             $keys = array_keys($merged);
             
-            if ($merged == $encryptfinal) {
-        
-            $numtest = $this->checkNum($merged);  
+            if (max($encryptfinal) <=  max($merged)) {
+            
+            $numtest = $this->checkNum($merged, $encryptfinal);  
             
             if ($numtest[0] == 2 && $numtest[1] === array())  {
                 $trueroom[] = $id;
@@ -134,9 +135,9 @@ class Puzzle4
                 $trueroom[] = $id ; // Add $id to $trueroom array to be added later
               }
             }
-            } 
+            }
         }
         $answer = array_sum($trueroom);
-        return $answer;   
+        return  $answer;   
     }
 }         
