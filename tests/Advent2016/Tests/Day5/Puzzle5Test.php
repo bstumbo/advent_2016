@@ -14,7 +14,7 @@ class Day5Test extends \PHPUnit_Framework_TestCase
     public function testHash() {
         $input = 'abbhdwsy';
         $puzzle = new Puzzle5();
-        $result = $puzzle->hashInput($input);
+        $result = $puzzle->hashInput2($input);
         
          print_r($result);
     }
