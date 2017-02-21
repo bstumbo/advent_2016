@@ -4,7 +4,7 @@ namespace Advent2016\Day7;
 
 class Puzzle7
 {
-    public function inputToArray($input) {
+    public function inputToArray($input) { //Transform input into readable array
        $finalarray = [];
         $nospace = explode("\n", $input);
         foreach ($nospace as $i) {
@@ -14,19 +14,94 @@ class Puzzle7
         return $finalarray;
     }
     
-    public function checkABBA($input){
-        $ipnum = 0;
-        $check = $this->inputToArray($input);
-        foreach ($check as $i){
-            $inside = $i[1];
-            preg_match("/(..)(..)/", $inside, $abba);
-            if ($abba[1] !== strrev($abba[2])){
-                $ipnum++;
+    public function checkInner($checks) { //Check to see if characters inside brackets in input are ABBA
+            $true = 1;
+            $couple = [];
+             $newodd = [];
+            foreach ($checks as $odds) {
+                $newodds[] = str_split($odds);
             }
             
+            $merged = array_merge(...$newodds);
+            
+            foreach ($merged as $firsts ){ //Compare each charcter to next character in array
+                  $next = next($merged);
+                  $couple[] = $firsts.$next; //Build results into new array
         }
-       
-        return $ipnum++;
+        
+        foreach ($couple as $pair) {  //In new array, check to see if any sets of character meet ABBA
+            $reverse = strrev($pair);
+            if (in_array($reverse, $couple)){
+                $found = array_search($reverse, $couple);
+                $key = array_search($pair, $couple);
+                if ($found - $key == 2) {
+                    $true = 0; //If sets match ABBA, $true = 1
+                    break;
+                }
+            }
+        }  
+              
+        return $true; // If not ABBA, return $true as 1
+    }
+    
+    public function checkOuter($checks){ //Check to see if characters outside brackets meet ABBA standards
+        $true = 0;
+        $couple = [];
+        $neweven = [];
+            foreach ($checks as $evens) {
+                $neweven[] = str_split($evens);
+            }
+            
+            $merged = array_merge(...$neweven);
+
+       foreach ($merged as $firsts ){ //Compare each charcter to next character in array
+            
+              $next = next($merged);
+              $couple[] = $firsts.$next; //Build results into new array
+            
+        }
+        
+        foreach ($couple as $pair) {  //In new array, check to see if any sets of character meet ABBA
+            $reverse = strrev($pair);
+            if (in_array($reverse, $couple)){
+                $found = array_search($reverse, $couple);
+                $key = array_search($pair, $couple);
+                if ($found - $key == 2) {
+                    $true = 1; //If sets match ABBA, $true = 1
+                    break;
+                }
+            }
+        }
+        
+        
+        
+        return $true;
+    }
+    
+    public function checkABBA($input){ // After checks, count number of IP address that match ABBA
+        $ipnum = 0;
+        $check = $this->inputToArray($input);
+        
+        foreach ($check as $data) {
+             $odd = [];
+             $even = [];
+            foreach ($data as $k => $v) { //Split bracketed characters to $odd array, outside characters to $even
+            if ($k % 2 == 0) {
+                $even[] = $v;
+            } else {
+                $odd[] = $v;
+            }
+        }
+        $inner = $this->checkInner($odd);
+        if ($inner == 1) {
+          $outer = $this->checkOuter($even);
+          if ($outer == 1) {
+            $ipnum++;
+          }
+        }
+        }
+        
+        return $ipnum;
     }
     
 
