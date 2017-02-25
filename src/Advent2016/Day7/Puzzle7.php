@@ -8,7 +8,7 @@ class Puzzle7
        $finalarray = [];
         $nospace = explode("\n", $input);
         foreach ($nospace as $i) {
-            $result = preg_split('/\[|\]/', $i);
+            $result = preg_split('/\[|\]/', $i); //Split string where brackets occur
             $finalarray[] = $result;     
         }
         return $finalarray;
@@ -17,29 +17,34 @@ class Puzzle7
     public function checkInner($checks) { //Check to see if characters inside brackets in input are ABBA
             $true = 1;
             $couple = [];
-             $newodd = [];
+            /* $newodd = [];
             foreach ($checks as $odds) {
                 $newodds[] = str_split($odds);
             }
             
-            $merged = array_merge(...$newodds);
+            $merged = array_merge(...$newodds); */
             
-            foreach ($merged as $firsts ){ //Compare each charcter to next character in array
-                  $next = next($merged);
-                  $couple[] = $firsts.$next; //Build results into new array
-        }
+            foreach ($checks as $first) {//Foreach string in array
+             $string = str_split($first); //Split string into another array for each character
+            foreach ($string as $firsts){ //Compare each character to the next character
+              $next = next($string);
+              $couple[] = $firsts.$next; //Build results into new array 
+            }
         
         foreach ($couple as $pair) {  //In new array, check to see if any sets of character meet ABBA
-            $reverse = strrev($pair);
+            $reverse = strrev($pair); 
             if (in_array($reverse, $couple)){
                 $found = array_search($reverse, $couple);
                 $key = array_search($pair, $couple);
                 if ($found - $key == 2) {
                     $true = 0; //If sets match ABBA, $true = 1
                     break;
+                        }
+                    }
                 }
+                
+                unset($couple); //Unset $couple array for next iteration
             }
-        }  
               
         return $true; // If not ABBA, return $true as 1
     }
@@ -47,20 +52,19 @@ class Puzzle7
     public function checkOuter($checks){ //Check to see if characters outside brackets meet ABBA standards
         $true = 0;
         $couple = [];
-        $neweven = [];
+            /*$neweven = [];
             foreach ($checks as $evens) {
                 $neweven[] = str_split($evens);
             }
             
-            $merged = array_merge(...$neweven);
-
-       foreach ($merged as $firsts ){ //Compare each charcter to next character in array
+            $merged = array_merge(...$neweven); */
             
-              $next = next($merged);
-              $couple[] = $firsts.$next; //Build results into new array
-            
-        }
-        
+        foreach ($checks as $first) {//Foreach string in array
+             $string = str_split($first); //Split string into another array for each character
+            foreach ($string as $firsts){ //Compare each character to the next character
+              $next = next($string);
+              $couple[] = $firsts.$next; //Build results into new array 
+            }
         foreach ($couple as $pair) {  //In new array, check to see if any sets of character meet ABBA
             $reverse = strrev($pair);
             if (in_array($reverse, $couple)){
@@ -71,10 +75,11 @@ class Puzzle7
                     break;
                 }
             }
+          }
+          unset($couple);
         }
         
-        
-        
+
         return $true;
     }
     
@@ -103,6 +108,5 @@ class Puzzle7
         
         return $ipnum;
     }
-    
 
 }
