@@ -108,5 +108,17 @@ class Puzzle7
         
         return $ipnum;
     }
+    
+    /********************************************************************************************************/
+    
+    public function inputToArray2($input) { //Transform input into readable array
+       $finalarray = [];
+        $nospace = explode("\n", $input);
+        foreach ($nospace as $i) {
+            $result = preg_split('/\[|\]/', $i); //Split string where brackets occur
+            $finalarray[] = $result;     
+        }
+        return $finalarray;
+    }
 
 }
