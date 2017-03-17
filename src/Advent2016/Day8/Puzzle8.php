@@ -7,11 +7,46 @@ class Puzzle8
     
     function inputArray ($input) {
         
-        /**
-         * Coming Soon
-         **/
+        $directions = [];
+        
+        $individual = explode("\n", $input); //Break input into individual lines in array
+        foreach ($individual as $line) {
+            $first = explode(' ', trim($line));
+            $word = $first[0];
+            switch ($word) {
+               case 'rect':
+                preg_match_all('!\d+!', $line, $numbers);
+                $x = $numbers[0][0];
+                $y = $numbers[0][1];
+                $directions[] = array($word, $x, $y);
+                break;
+               
+               case 'rotate':
+               $second = $first[1];
+               
+               if ($second == 'row') {
+                preg_match_all('!\d+!', $line, $numbers);
+                $x = $numbers[0][0];
+                $y = $numbers[0][1];
+                $twoword = $word . ' ' . $second;
+                $directions[] = array($twoword, $y, $x);
+               }
+               
+               if ($second == 'column') {
+                preg_match_all('!\d+!', $line, $numbers);
+                $x = $numbers[0][0];
+                $y = $numbers[0][1];
+                $twoword = $word . ' ' .  $second;
+                $directions[] = array($twoword, $x, $y);
+               }
+               
+               break;
+             
+            }
+        }
+        
     
-        return $input;
+        return $directions;
     }
     
         /**
@@ -49,7 +84,7 @@ class Puzzle8
                 if ($count > $max) {
                     $count = 0;
                 }
-                $matrix[$y][$count] = $value;
+                $matrix[$y][$count] = $value;           //Set the next value in the array
             }
             
             $original = $matrix[$y];                    //Set $original to new $matrix values
@@ -58,36 +93,36 @@ class Puzzle8
         return $matrix;
     }
     
+        /**
+         * Shift values in specified column ($matrix[$x]) a specified number of spaces ($y)
+         **/
+    
     function matrixColumn ($x, $y, $matrix) {
-        $max = 2;
-        $original = $matrix;
-        for ($shift = 0; $shift < $y; $shift++){              
+        $max = 2;                                        //grid limit || Starts $count over at 0
+        $original = $matrix;                             //Keep track of original $matrix values
+        for ($shift = 0; $shift < $y; $shift++){         //Move values $y number of times   
             $count = 0;
-            foreach ($original as $key => $value) {     
+            foreach ($original as $value) {              //Iterate over original array to move values (in columns, not rows)
                 $count++;
-                if ($count > $max) {
+                 if ($count > $max) {
                     $count = 0;
                 }
-                $matrix[$count][$x] = $value;
-            }
-            
-            $original = $matrix;                    
+                $matrix[$count][$x] = $value[$x];       //Set the next value in the *next* array (one row down)
+                }
+                
+            $original = $matrix;                        //Set $original to new $matrix values                                                                     
         }
         
         return $matrix;
-        
-        
+            
     }
     
     function countPixels($input) {
-        
         $width = 50;
         $height = 6;
-        $x = 3;
-        $y = 2;
         $matrix = array_fill(0, $height, array_fill(0, $width, 0));
         
-        $answer = $this->matrixRect($x, $y, $matrix);
+        
         
        return $answer;
         
