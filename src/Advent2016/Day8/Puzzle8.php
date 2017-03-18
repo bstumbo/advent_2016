@@ -165,8 +165,29 @@ class Puzzle8
             }
         }
         
-       return $count;
+       return $matrix;
         
+    }
+    
+    /**
+     * Convert the final $matrix array into multiple strings so
+     * answer can be printed into to decipher code.
+     **/
+    
+    function printAnswer($input) {
+        $final = $this->countPixels($input);
+        $string = '';
+        $answer = '';
+        
+        foreach ($final as $row){
+            foreach ($row as $key => $value){
+                $string .= $value;
+            }
+           $answer .= $string . "<br>";
+           $string = '';
+        }
+        
+      return $answer;  
     }
 
 }
