@@ -75,7 +75,7 @@ class Puzzle8
          **/
     
     function matrixRow($x, $y, $matrix) {
-        $max = 4;                                       //grid limit || Starts $count over at 0
+        $max = 49;                                       //grid limit || Starts $count over at 0
         $original = $matrix[$y];                        //Keep track of original $matrix values
         for ($row = 0; $row < $x; $row++){              //Move values $x number of times
             $count = 0;
@@ -98,7 +98,7 @@ class Puzzle8
          **/
     
     function matrixColumn ($x, $y, $matrix) {
-        $max = 2;                                        //grid limit || Starts $count over at 0
+        $max = 5;                                        //grid limit || Starts $count over at 0
         $original = $matrix;                             //Keep track of original $matrix values
         for ($shift = 0; $shift < $y; $shift++){         //Move values $y number of times   
             $count = 0;
@@ -117,14 +117,55 @@ class Puzzle8
             
     }
     
+    /**
+     * Setup grid $matrix array (50x6)
+     *
+     * PUt directions into iterable array ($dir)
+     *
+     * Iterate over new array.  If case 'rect', use matrixRect(); If case 'rotate row', use matrixRow();
+     * If case 'rotate column' use matrixColumn();
+     *
+     * Finally, iterate over the final $matrix array, count the number of "1" values;
+     **/
+    
     function countPixels($input) {
         $width = 50;
         $height = 6;
         $matrix = array_fill(0, $height, array_fill(0, $width, 0));
         
+        $dir = $this->inputArray($input);
         
+        foreach ($dir as $first) {
+                switch ($first[0]) {
+                    case 'rect':
+                        $x = $first[1];
+                        $y = $first[2];
+                        $matrix = $this->matrixRect($x, $y, $matrix);
+                        break;
+                    case 'rotate row':
+                        $x = $first[1];
+                        $y = $first[2];
+                        $matrix = $this->matrixRow($x, $y, $matrix);
+                        break;
+                    case 'rotate column':
+                        $x = $first[1];
+                        $y = $first[2];
+                        $matrix = $this->matrixColumn($x, $y, $matrix);
+                        break;
+                }
+        }
         
-       return $answer;
+        $count = 0;
+        
+        foreach ($matrix as $first){
+            foreach ($first as $second){
+                if ($second =='1'){
+                    $count++;
+                }
+            }
+        }
+        
+       return $count;
         
     }
 
