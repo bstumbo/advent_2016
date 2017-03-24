@@ -39,9 +39,13 @@ class Puzzle9
             $new = [];
             $finalcount = [];
             
-            foreach ($original as $value){
-                $new[] = preg_split('/\(|\)/', $value);   // Separate out markers (XxY) from rest of string in array
-            }
+            foreach ($original as $index => $string){
+              //  $new[] = preg_split('/\(|\)/', $value); // Separate out markers (XxY) from rest of string in array
+              
+             preg_match_all('/([\d]+)/', $string, $preg);
+             $markarray = array_chunk($preg[0], 2);
+              
+            
             
             /**
              * In each array, get values of $x (first integer) and $y (second integer)
@@ -53,29 +57,27 @@ class Puzzle9
              * 
              */
             
-            foreach($new as $key => $value){             
-                $string = $value[1];
-                preg_match_all('/([\d]+)/', $string, $nums);
-                $x = $nums[0][0];
-                $y = $nums[0][1];
-                $mark = "(" . $x . "x" . $y .")";
+          foreach($markarray as $key => $value){             
+                $x = $value[0];
+                $y = $value[1];
+               //$mark = "(" . $x . "x" . $y .")";
                 
-                $position = strpos($original[$key], $y);
-                if ($x == $y) {                                       // If $x and $y are same value, get actual position of $y by adding 2;
-                    $position = $position + 2;
-                }
-                $reposition = $position + 2;
-                $repvalue = substr($original[$key], $reposition, $x);
+                $positionstart = strpos($original[$index], "(");
+                $position = strpos($original[$index], ")");
+                $reposition = $position + 1;
+                $repvalue = substr($original[$index], $reposition, $x);
                 $insert = str_repeat($repvalue, $y);
+                $endposition = $x + 5;
                 
-                $updated = str_replace($repvalue, $insert, $original[$key]);
-                $upfinal= str_replace($mark, "", $updated);
-                
-                $finalcount[] = $nums;
-                
+                $upfinal= substr_replace($original[$index], $insert, $positionstart, $endposition);
+            
+                $original[$index] = $upfinal;
+            
+            } 
+            
             }
             
-            return $finalcount;
+            return $original;
         
     }
 
