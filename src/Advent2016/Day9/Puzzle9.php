@@ -35,18 +35,17 @@ class Puzzle9
     
             $start = $this->inputArray($input);
             $original = $start[0];
-            $separate = $start[1];
+            $check = $start[0];   //Keep original array strings in tact; To be used as check later;
             $new = [];
             $finalcount = [];
             
             foreach ($original as $index => $string){
               //  $new[] = preg_split('/\(|\)/', $value); // Separate out markers (XxY) from rest of string in array
-              
+             $flag = 0; 
              preg_match_all('/([\d]+)/', $string, $preg);
              $markarray = array_chunk($preg[0], 2);
-              
-            
-            
+             
+             
             /**
              * In each array, get values of $x (first integer) and $y (second integer)
              *
@@ -58,9 +57,14 @@ class Puzzle9
              */
             
           foreach($markarray as $key => $value){             
+                if ($flag == 1) {
+                   $i = 0;
+                   while ($i++ < ($repcount + 1)) {
+                         continue 2;
+                   }
+                }
                 $x = $value[0];
                 $y = $value[1];
-               //$mark = "(" . $x . "x" . $y .")";
                 
                 $positionstart = strpos($original[$index], "(");
                 $position = strpos($original[$index], ")");
@@ -69,6 +73,21 @@ class Puzzle9
                 $insert = str_repeat($repvalue, $y);
                 $endposition = $x + 5;
                 
+                /**
+                 * Figure out if next iteration should be skipped.
+                 *
+                 * If this mark includes the next mark, that mark should be skipped in the iteration.
+                 */
+ 
+                $repcount = substr_count($repvalue, '(');    //Counting the number of "fake" marks in the repeating string
+                
+                if ($repcount > 0) {
+                    $flag = 1;
+                }
+                
+                /*
+                 * Get updated $orginal array string.  Then up date the actual array
+                 */
                 $upfinal= substr_replace($original[$index], $insert, $positionstart, $endposition);
             
                 $original[$index] = $upfinal;
