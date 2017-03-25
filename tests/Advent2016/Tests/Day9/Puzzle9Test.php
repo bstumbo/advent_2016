@@ -14,10 +14,7 @@ class Day8Test extends \PHPUnit_Framework_TestCase
     
     public function testcheckInput() {
      
-    $input = 'A(1x5)BC
-(3x3)XYZ
-A(2x2)BCD(2x2)EFG
-(6x1)(1x3)A(1x3)A';
+    $input = '(6x1)(1x3)ABD(2x3)AB';
     
     $puzzle = new Puzzle9();
     $result = $puzzle->extractMarker($input);

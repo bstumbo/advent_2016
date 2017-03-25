@@ -5,7 +5,6 @@ namespace Advent2016\Day9;
 class Puzzle9
 {
 
-
     /**
      * Explode $input into array ($individual)
      *
@@ -56,13 +55,15 @@ class Puzzle9
              * 
              */
             
-          foreach($markarray as $key => $value){             
-                if ($flag == 1) {
-                   $i = 0;
-                   while ($i++ < ($repcount + 1)) {
-                         continue 2;
-                   }
-                }
+            $repcount = 0;
+            $i = 0;
+            
+          foreach($markarray as $key => $value){
+                  if ($i < $repcount){
+                         $i++;
+                         continue;
+                   } 
+    
                 $x = $value[0];
                 $y = $value[1];
                 
@@ -80,24 +81,27 @@ class Puzzle9
                  */
  
                 $repcount = substr_count($repvalue, '(');    //Counting the number of "fake" marks in the repeating string
-                
-                if ($repcount > 0) {
-                    $flag = 1;
-                }
-                
+                $i = 0;
                 /*
                  * Get updated $orginal array string.  Then up date the actual array
                  */
                 $upfinal= substr_replace($original[$index], $insert, $positionstart, $endposition);
-            
-                $original[$index] = $upfinal;
+                
+                $new[] = $insert;
+               
+   
+               // $original[$index] = $upfinal;
             
             } 
-            
+            $finalstring = '';
+            foreach ($new as $key => $final) {
+                $finalstring .= $final;
             }
             
-            return $original;
+            return $new;
         
+      }
+    
     }
 
 }
