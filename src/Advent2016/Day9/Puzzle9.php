@@ -55,8 +55,12 @@ class Puzzle9
         
         $repcount = 0;
         $i = 0;
+        $j = 0;
+        $orig = $original[$index];
         $buildstring = [];
         $newmark = [];
+        $xvaluearray = [];
+        $upfinal1 = [];
         
         foreach($markarray as $key => $value){
             
@@ -68,12 +72,24 @@ class Puzzle9
                 $x = $value[0];
                 $y = $value[1];
                 
-                $positionstart = strpos($original[$index], "(");
-                $position = strpos($original[$index], ")");
+                $marker = "(" . $x . "x" . $y . ")";
+                $markerlength = strlen($marker);
+                
+                if ($j > 0){
+                  $positionstart = strpos($orig, $insert);
+                  $positionstart = $positionstart + strlen($insert) + $markerlength;
+                } else {
+                   $positionstart = strpos($orig, $marker); 
+                }
+                
+                
+                $positionend = substr($orig, $positionstart + ($markerlength - 1));
+                $position = strpos($orig, $positionend);
                 $reposition = $position + 1;
-                $repvalue = substr($original[$index], $reposition, $x);
+                $repvalue = substr($orig, $reposition, $x);
                 $insert = str_repeat($repvalue, $y);
-                $endposition = $x + 5;
+                //$endposition = $positionstart + 5;
+                $count = strlen($insert) + $markerlength - 1; 
                 
                 /**
                  * Figure out if next iteration should be skipped.
@@ -83,32 +99,37 @@ class Puzzle9
  
                 $repcount = substr_count($repvalue, '(');    //Counting the number of "fake" marks in the repeating string
                 $i = 0;
+                $j++;
                 /*
                  * Get updated $orginal array string.  Then update the actual array
                  */
                 
                 $buildstring[] = $insert;
                 $newmark[] = "(" . $x . "x" . $y . ")";
+                $xvalue[] = $x;
+                $stringposition[] = array($positionstart, $position);
                 
-                $upfinal = substr_replace($original[$index], '', $positionstart, $endposition);
+                $upfinal = substr_replace($orig, $insert, $positionstart, $count);
+                $upfinal1[] = substr_replace($orig, $insert, $positionstart, $count);
                 
-                $original = array($upfinal);
+                $orig = $upfinal;
                 
                             
             }
             
-        return array($newmark, $buildstring);
+        return array($newmark, $buildstring, $xvalue, $stringposition, $upfinal1);
     }
      
     function buildFinalString($finalarray, $original) {
         //$original = $original[0];
         $marks = $finalarray[0];
         $strings = $finalarray[1];
+        $finalx = $finalarray[2];
         
         foreach ($marks as $index => $string) {
             $place = strpos($original, $string);
-            $xvalue = substr($string, 1, 1);
-            $count = strlen($string) + intval($xvalue);
+            $x = $finalx[$index];
+            $count = strlen($string) + $x;
             $original = substr_replace($original, $strings[$index], $place, $count);
         }
         
@@ -151,7 +172,7 @@ class Puzzle9
         $decompressed = array_sum($answer);
         
     
-        return $finalstring;
+        return $decompressed;
     }
 
 
