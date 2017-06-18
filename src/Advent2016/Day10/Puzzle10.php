@@ -27,6 +27,8 @@ class Puzzle10
      * $botinstruction[$index][0] = Bot #
      * $botinstruction[$index][1] = Low number direction
      * $botinstruction[$index][2] = High number direction
+     *
+     * Bots that take values to "outboxes" are recognized with negative integers
      */
     
     function separateBotValues($separatedarray) {
@@ -43,6 +45,15 @@ class Puzzle10
                     $bot = $botnums[0][0];
                     $low = $botnums[0][1];
                     $high = $botnums[0][2];
+                    
+                    if (strpos($value, ('output ' . $low)) !== false) {
+                        $low = $low * -1;
+                    }
+                    
+                     if (strpos($value, ('output ' . $high)) !== false) {
+                        $high = $high * -1;
+                    }
+                    
                     $botinstruction[] = array($bot, $low, $high);
                     break;
                 case 'value':
@@ -91,7 +102,7 @@ class Puzzle10
      * Creates array of where values start
      */
     
-    function buildBotProcessArray($botdirlookup, $valdir) {
+    function buildBotProcessArray($valdir) {
         $empty =[];
         $botarray = array_fill(0,300, $empty);
         
@@ -107,15 +118,151 @@ class Puzzle10
         
     }
     
+    /*
+     *  Builds $values array to keep track of what values make it to outboxes
+     */
+    
+    function buildValuesArray($valdir) {
+        $values = [];
+        
+        foreach ($valdir as $val) {
+            $values[] = $val[1];
+        }
+        
+        return $values;
+    }
+    
+    
+    /*
+     * Compare values to determine which is high and which is low
+     *
+     * Returns array with $high at [0] and $low at [1]
+     */
+    
+    function compareValues($values) {
+        if ($values[0] > $values[1]){
+                $high = $values[0];
+                $low = $values[1];
+            } else {
+                $high = $values[1];
+                $low = $values[0];
+            }
+            
+        $highlow = array($high, $low);    
+    
+    return $highlow;
+    
+    }
+    
+    /*
+     * Remove values from the value array
+     */
+    
+    function removeValueFromArray ($value, array $valuesarray) {
+        $key = array_search($value, $valuesarray);
+        unset($key);
+    }
+    
+  /*  Figure out which bot currently has two values
+        Obtain those two values from array
+        Compare two values to figure out which is high and which is low
+        Look up instructions by bot number
+        Update processarray with updated numbers
+        Record movement in a separate array
+        If value goes to outbox, remove it from values array
+        Repeat this process until $valuesarray is empty */
+
+    
+    function buildProcessTracking($processarray, $botdirlookup, $valuesarray) {
+    
+    for($k = 0; $k < 100; $k++){    
+            $test = [];
+            
+            $processlength = count(array_values($processarray));
+        
+         for ($i = 0; $i < $processlength; $i++) {
+            if (count(array_values($processarray[$i])) == 2) {
+                $key = array_keys($processarray, $processarray[$i]);
+                $value = $processarray[$i];
+                
+                $test[] = array($key, $value);
+            }
+         }
+         
+         /*
+          * Get high and low values sorted
+         */
+         $highlow = $this->compareValues($value);
+         
+         $lowvalue = $highlow[1];
+         $highvalue = $highlow[0];
+         
+         /* Lookup bot diections in the $botdirlookup array with
+          * key value of $key.  $key = bot #
+          */
+         
+         $instrct = $botdirlookup[$key[0]];
+         
+         /*
+          * Assign low and high bot #'s
+          */
+         
+         $lowbot = $instrct[0];
+         $highbot = $instrct[1];
+         
+         
+         /*
+          * If $lowbot is a negative number, remove it from the $valuesarray;
+          * Otherwise, move it to the appropriate bot in the $processarray;
+          */
+         
+         
+         if ($lowbot < 0) {
+            $this->removeValueFromArray($lowvalue, $valuesarray);
+         } else {
+            
+            $processarray[$lowbot][] = $lowvalue;
+         
+         }
+         
+         /*
+          * If $highbot is a negative number, remove it from the $valuesarray;
+          * Otherwise, move it to the appropriate bot in the $processarray;
+          */
+         
+         if ($highbot < 0) {
+            $this->removeValueFromArray($highbot, $valuesarray);
+         } else {
+            
+            $processarray[$highbot][] = $highvalue;
+         
+         }
+         
+         /*
+          * Remove old values from $processarray
+          */
+         
+         $processarray[$key[0]] = array();
+         
+        }
+     
+     return $valuesarray;
+        
+        
+    }
+    
+    
     function searchBots($input) {
         $separated = $this->iterateStringToArray($input);
         $instrctarray = $this->separateBotValues($separated);
         $botdir = $instrctarray[0];
         $valdir = $instrctarray[1];
         $botdirlookup = $this->buildBotDirectionsArray($botdir);
-        $test = $this->buildBotProcessArray($botdirlookup, $valdir);
+        $valuesarray = $this->buildValuesArray($valdir);
+        $process = $this->buildBotProcessArray($valdir);
+        $test = $this->buildProcessTracking($process, $botdirlookup, $valuesarray);
         
-        return $test;
+        return $valuesarray;
     }
     
     
