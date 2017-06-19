@@ -245,7 +245,8 @@ bot 135 gives low to bot 185 and high to bot 29
 bot 195 gives low to bot 200 and high to bot 83
 bot 80 gives low to output 20 and high to output 13';
          $puzzle = new Puzzle10();
-         $result = $puzzle->searchBots($input);
+         $search = array(17, 61);
+         $result = $puzzle->searchBots($input, $search);
     
      print_r($result);
     }

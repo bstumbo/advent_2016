@@ -92,6 +92,7 @@ class Puzzle10
         }
         
         $botdirlookup = array_combine($index, $vals);
+        ksort($botdirlookup);
         
         return $botdirlookup;
         
@@ -160,7 +161,9 @@ class Puzzle10
     
     function removeValueFromArray ($value, array $valuesarray) {
         $key = array_search($value, $valuesarray);
-        unset($key);
+        unset($valuesarray[$key]);
+        
+        return $valuesarray;
     }
     
   /*  Figure out which bot currently has two values
@@ -173,21 +176,23 @@ class Puzzle10
         Repeat this process until $valuesarray is empty */
 
     
-    function buildProcessTracking($processarray, $botdirlookup, $valuesarray) {
+    function buildProcessTracking($processarray, $botdirlookup, $valuesarray, $srchval1, $srchval2) {
     
-    for($k = 0; $k < 100; $k++){    
-            $test = [];
+    $recordsteps = [];
+    
+    while (in_array($srchval1, $valuesarray) && in_array($srchval1, $valuesarray)) {
+    //for($k = 0; $k < 200; $k++){    
             
             $processlength = count(array_values($processarray));
         
+         
          for ($i = 0; $i < $processlength; $i++) {
-            if (count(array_values($processarray[$i])) == 2) {
+            if (count(array_values($processarray[$i])) >= 2) {
                 $key = array_keys($processarray, $processarray[$i]);
                 $value = $processarray[$i];
                 
-                $test[] = array($key, $value);
-            }
-         }
+                $recordsteps[] = array($key, $value);
+          
          
          /*
           * Get high and low values sorted
@@ -201,7 +206,7 @@ class Puzzle10
           * key value of $key.  $key = bot #
           */
          
-         $instrct = $botdirlookup[$key[0]];
+        $instrct = $botdirlookup[$key[0]];
          
          /*
           * Assign low and high bot #'s
@@ -210,15 +215,15 @@ class Puzzle10
          $lowbot = $instrct[0];
          $highbot = $instrct[1];
          
-         
+         // $test[] = array($lowbot, $highbot);
          /*
           * If $lowbot is a negative number, remove it from the $valuesarray;
           * Otherwise, move it to the appropriate bot in the $processarray;
           */
          
          
-         if ($lowbot < 0) {
-            $this->removeValueFromArray($lowvalue, $valuesarray);
+         if (abs($lowbot) != $lowbot) {
+           $valuesarray = $this->removeValueFromArray($lowvalue, $valuesarray);
          } else {
             
             $processarray[$lowbot][] = $lowvalue;
@@ -230,8 +235,8 @@ class Puzzle10
           * Otherwise, move it to the appropriate bot in the $processarray;
           */
          
-         if ($highbot < 0) {
-            $this->removeValueFromArray($highbot, $valuesarray);
+         if (abs($highbot) != $highbot) {
+          $valuesarray = $this->removeValueFromArray($highbot, $valuesarray);
          } else {
             
             $processarray[$highbot][] = $highvalue;
@@ -244,15 +249,38 @@ class Puzzle10
          
          $processarray[$key[0]] = array();
          
-        }
+           }
+         } 
+         
+         }
      
-     return $valuesarray;
+     return $recordsteps;
+           
+    }
+    
+    /*
+     * Query the $recordedsteps array to determine
+     * which bot meets search terms
+     */
+    
+    function queryRecordedArray($recordedsteps, $srchval1, $srchval2) {
         
+        foreach($recordedsteps as $key => $value) {
+            if ($value[1] == array($srchval1, $srchval2) || $value[1] == array($srchval2, $srchval1)) {
+            $answer = $value[0];
+            }    
+        }
         
+        return $answer;  
     }
     
     
-    function searchBots($input) {
+    
+    
+    
+    function searchBots($input, array $search) {
+        $srchval1 = $search[0];
+        $srchval2 = $search[1];
         $separated = $this->iterateStringToArray($input);
         $instrctarray = $this->separateBotValues($separated);
         $botdir = $instrctarray[0];
@@ -260,9 +288,10 @@ class Puzzle10
         $botdirlookup = $this->buildBotDirectionsArray($botdir);
         $valuesarray = $this->buildValuesArray($valdir);
         $process = $this->buildBotProcessArray($valdir);
-        $test = $this->buildProcessTracking($process, $botdirlookup, $valuesarray);
+        $recordedsteps = $this->buildProcessTracking($process, $botdirlookup, $valuesarray, $srchval1, $srchval2);
+        $answer = $this->queryRecordedArray($recordedsteps, $srchval1, $srchval2);
         
-        return $valuesarray;
+        return $answer;
     }
     
     
